@@ -1,24 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ecommerce Store
+
+A full-stack, scalable e-commerce platform for selling T-shirts, built with Next.js (App Router), TypeScript, Tailwind CSS, MongoDB, and NextAuth.js.
+
+## Features
+
+- Customer-facing store with product listing, details, cart, checkout, and order management
+- Admin panel for managing products, orders, users, and inventory
+- Authentication with NextAuth.js
+- Modular, clean, and scalable codebase
+
+## Folder Structure
+
+See project directories for details. All business logic, components, services, and utilities are organized for scalability and maintainability.
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies: `npm install`
+2. Set up your `.env` file for MongoDB and NextAuth.js
+3. Run the development server: `npm run dev`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+- MongoDB
+- NextAuth.js
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Learn More
 
