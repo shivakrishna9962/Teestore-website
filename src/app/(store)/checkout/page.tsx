@@ -312,7 +312,7 @@ export default function CheckoutPage() {
                                     </div>
                                     {editingAddress?._id === addr._id && (
                                         <div className="mt-4 pt-4 border-t border-gray-200" onClick={(e) => e.stopPropagation()}>
-                                            <AddressForm initial={editingAddress} onSave={handleSaveAddress}
+                                            <AddressForm initial={editingAddress!} onSave={handleSaveAddress}
                                                 onCancel={() => setEditingAddress(null)} saving={addrSaving} />
                                         </div>
                                     )}
