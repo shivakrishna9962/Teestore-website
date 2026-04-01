@@ -310,10 +310,17 @@ export default function CheckoutPage() {
                                                 className="text-red-500 hover:text-red-700 underline">Delete</button>
                                         </div>
                                     </div>
-                                    {editingAddress?._id === addr._id && (
-                                        <div className="mt-4 pt-4 border-t border-gray-200" onClick={(e) => e.stopPropagation()}>
-                                            <AddressForm initial={editingAddress!} onSave={handleSaveAddress}
-                                                onCancel={() => setEditingAddress(null)} saving={addrSaving} />
+                                    {editingAddress && editingAddress._id === addr._id && (
+                                        <div
+                                            className="mt-4 pt-4 border-t border-gray-200"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <AddressForm
+                                            initial={editingAddress}
+                                            onSave={handleSaveAddress}
+                                            onCancel={() => setEditingAddress(null)}
+                                            saving={addrSaving}
+                                            />
                                         </div>
                                     )}
                                 </div>
