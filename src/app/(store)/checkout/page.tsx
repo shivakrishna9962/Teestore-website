@@ -1,5 +1,7 @@
 ﻿'use client';
+
 export const dynamic = "force-dynamic";
+import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
@@ -86,6 +88,14 @@ function AddressForm({ initial, onSave, onCancel, saving }: {
 }
 
 export default function CheckoutPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-gray-300 border-t-black rounded-full animate-spin" /></div>}>
+            <CheckoutContent />
+        </Suspense>
+    );
+}
+
+function CheckoutContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const dispatch = useAppDispatch();
@@ -316,10 +326,10 @@ export default function CheckoutPage() {
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <AddressForm
-                                            initial={editingAddress}
-                                            onSave={handleSaveAddress}
-                                            onCancel={() => setEditingAddress(null)}
-                                            saving={addrSaving}
+                                                initial={editingAddress}
+                                                onSave={handleSaveAddress}
+                                                onCancel={() => setEditingAddress(null)}
+                                                saving={addrSaving}
                                             />
                                         </div>
                                     )}
