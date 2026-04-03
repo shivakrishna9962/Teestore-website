@@ -7,10 +7,13 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' as any });
 
+console.log("STRIPE KEY:", process.env.STRIPE_SECRET_KEY);
+
 const SHIPPING_COST = 500; // cents
 const TAX_RATE = 0.1;
 
 export async function POST(_req: NextRequest) {
+    console.log("STRIPE KEY:", process.env.STRIPE_SECRET_KEY);
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
