@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import type { Product } from '@/types/product';
 
 async function fetchProducts(params: Record<string, string>) {
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+  const base = process.env.NEXT_PUBLIC_BASE_URL;
   const qs = new URLSearchParams(params).toString();
   const res = await fetch(`${base}/api/products?${qs}`, { cache: 'no-store' });
   if (!res.ok) return { products: [] };

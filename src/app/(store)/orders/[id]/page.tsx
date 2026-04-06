@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 async function getOrder(id: string): Promise<Order | null> {
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+  const base = process.env.NEXT_PUBLIC_BASE_URL;
   const res = await fetch(`${base}/api/orders/${id}`, { cache: 'no-store' });
   if (!res.ok) return null;
   const data = await res.json();
