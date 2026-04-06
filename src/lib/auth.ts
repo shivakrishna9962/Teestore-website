@@ -4,6 +4,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from './db';
 import UserModel from '../models/User';
+import { verifyOtp } from './otp';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -32,6 +33,30 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    }),
+    CredentialsProvider({
+      id: 'mobile-otp',
+      name: 'mobile-otp',
+      credentials: {
+        mobileNumber: { label: 'Mobile Number', type: 'text' },
+        otp: { label: 'OTP', type: 'text' },
+      },
+      async authorize(credentials) {
+        if (!credentials?.mobileNumber || !credentials?.otp) return null;
+        const result = await verifyOtp(credentials.mobileNumber, credentials.otp);
+        if (!result.ok || !result.userId) return null;
+        await connectToDatabase();
+        const user = await UserModel.findById(result.userId).select('_id name email role status mobileNumber');
+        if (!user) return null;
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email ?? null,
+          role: user.role,
+          status: user.status,
+          mobileNumber: user.mobileNumber,
+        };
+      },
     }),
   ],
   session: { strategy: 'jwt' },
@@ -63,17 +88,32 @@ export const authOptions: NextAuthOptions = {
         if ((user as any).id) {
           token.sub = (user as any).id;
         }
+        if ((user as any).mobileNumber !== undefined) {
+          token.mobileNumber = (user as any).mobileNumber;
+        }
       }
       // Re-fetch status on each token refresh to catch suspensions
-      if (token.email && !user) {
+      if (!user) {
         await connectToDatabase();
-        const dbUser = await UserModel.findOne({ email: token.email }).select('_id role status');
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.status = dbUser.status;
-          // Ensure token.sub always reflects the MongoDB _id
-          if (!token.sub || token.sub !== dbUser._id.toString()) {
-            token.sub = dbUser._id.toString();
+        if (token.email) {
+          // Email-based users (credentials or Google)
+          const dbUser = await UserModel.findOne({ email: token.email }).select('_id role status mobileNumber');
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.status = dbUser.status;
+            token.mobileNumber = dbUser.mobileNumber ?? null;
+            // Ensure token.sub always reflects the MongoDB _id
+            if (!token.sub || token.sub !== dbUser._id.toString()) {
+              token.sub = dbUser._id.toString();
+            }
+          }
+        } else if (token.sub) {
+          // Mobile-only users (no email) — look up by MongoDB _id stored in token.sub
+          const dbUser = await UserModel.findById(token.sub).select('_id role status mobileNumber');
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.status = dbUser.status;
+            token.mobileNumber = dbUser.mobileNumber ?? null;
           }
         }
       }
@@ -84,6 +124,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).role = token.role;
         (session.user as any).status = token.status;
         (session.user as any).id = token.sub;
+        (session.user as any).mobileNumber = token.mobileNumber ?? null;
       }
       return session;
     },

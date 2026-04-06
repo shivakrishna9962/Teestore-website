@@ -89,9 +89,19 @@ export default function Navbar() {
                 )}
               </button>
               {notifOpen && (
-                <div className="absolute right-0 mt-2 z-50">
-                  <NotificationPanel onClose={() => setNotifOpen(false)} />
-                </div>
+                <>
+                  {/* Mobile: fixed centered overlay */}
+                  <div className="md:hidden fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/30"
+                    onClick={() => setNotifOpen(false)}>
+                    <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm">
+                      <NotificationPanel onClose={() => setNotifOpen(false)} />
+                    </div>
+                  </div>
+                  {/* Desktop: dropdown */}
+                  <div className="hidden md:block absolute right-0 mt-2 z-50">
+                    <NotificationPanel onClose={() => setNotifOpen(false)} />
+                  </div>
+                </>
               )}
             </div>
 
@@ -147,11 +157,18 @@ export default function Navbar() {
                   {session?.user ? (
                     <>
                       <Link
-                        href="/orders"
+                        href="/profile"
                         className="block px-4 py-2 text-sm hover:bg-gray-100"
                         onClick={() => setAccountOpen(false)}
                       >
                         Profile
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="block px-4 py-2 text-sm hover:bg-gray-100"
+                        onClick={() => setAccountOpen(false)}
+                      >
+                        Orders
                       </Link>
                       <button
                         onClick={() => { setAccountOpen(false); signOut({ callbackUrl: '/' }); }}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { addToCart } from '@/features/cart/cartSlice';
@@ -59,16 +60,23 @@ export default function ProductDetailClient({ product, inventory }: Props) {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
+            {/* Back to home */}
+            <Link href="/" className="inline-flex items-center gap-1.5 text-gray-500 hover:text-black transition-colors text-sm mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            
+            </Link>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
 
                 {/* ── Left: Image Gallery ── */}
-                <div className="sticky top-20">
-                    <div className="relative aspect-[3/4] bg-gray-100 rounded-2xl overflow-hidden">
+                <div className="md:sticky md:top-20">
+                    <div className="relative aspect-[3/4] bg-white rounded-2xl overflow-hidden">
                         <Image
                             src={mainImage}
                             alt={product.title}
                             fill
-                            className="object-cover"
+                            className="object-contain"
                             sizes="(max-width: 768px) 100vw, 50vw"
                             priority
                         />
@@ -81,7 +89,7 @@ export default function ProductDetailClient({ product, inventory }: Props) {
                                     onClick={() => setMainImage(img)}
                                     className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${mainImage === img ? 'border-black' : 'border-gray-200 hover:border-gray-400'}`}
                                 >
-                                    <Image src={img} alt={`view ${i + 1}`} fill className="object-cover" sizes="80px" />
+                                    <Image src={img} alt={`view ${i + 1}`} fill className="object-contain" sizes="80px" />
                                 </button>
                             ))}
                         </div>

@@ -54,12 +54,6 @@ export default function AdminChatPanel() {
         role: 'admin',
     });
 
-    function handleSelectConversation(conversationId: string) {
-        dispatch(setActiveConversation(conversationId));
-        dispatch(loadMessages(conversationId));
-        dispatch(markConversationRead(conversationId));
-    }
-
     function handleSend(text: string, file?: File) {
         if (!activeConversationId) return;
         setUploadError(null);
@@ -106,11 +100,22 @@ export default function AdminChatPanel() {
     }
 
     const currentUserId = (session?.user as { id?: string })?.id ?? '';
+    const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
+
+    function handleSelectConversation(conversationId: string) {
+        dispatch(setActiveConversation(conversationId));
+        dispatch(loadMessages(conversationId));
+        dispatch(markConversationRead(conversationId));
+        setMobileView('chat');
+    }
 
     return (
         <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
-            {/* Left column: conversation list */}
-            <div className="w-80 shrink-0 flex flex-col border-r border-gray-700 overflow-hidden">
+            {/* Left column: conversation list — full on desktop, toggleable on mobile */}
+            <div className={`
+                ${mobileView === 'list' ? 'flex' : 'hidden'} md:flex
+                w-full md:w-80 shrink-0 flex-col border-r border-gray-700 overflow-hidden
+            `}>
                 <div className="px-4 py-3 bg-gray-800 border-b border-gray-700 flex items-center gap-2">
                     <span className="font-semibold text-white text-sm">Conversations</span>
                     {isConnected && (
@@ -125,7 +130,18 @@ export default function AdminChatPanel() {
             </div>
 
             {/* Right column: messages */}
-            <div className="flex-1 flex flex-col overflow-hidden bg-gray-900">
+            <div className={`
+                ${mobileView === 'chat' ? 'flex' : 'hidden'} md:flex
+                flex-1 flex-col overflow-hidden bg-gray-900
+            `}>
+                {/* Back button — mobile only */}
+                <button
+                    onClick={() => setMobileView('list')}
+                    className="md:hidden flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm border-b border-gray-700 hover:text-white"
+                >
+                    ← Conversations
+                </button>
+
                 {activeConversationId ? (
                     <>
                         {uploadError && (

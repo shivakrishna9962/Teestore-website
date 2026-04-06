@@ -179,8 +179,8 @@ export default function AdminProductsPage() {
         {
             key: 'image', label: 'Image',
             render: (p: Product) => (
-                <div className="relative w-10 h-10 rounded overflow-hidden bg-gray-100">
-                    {p.images?.[0] && <Image src={p.images[0]} alt={p.title} fill className="object-cover" sizes="40px" />}
+                <div className="relative w-10 h-10 rounded overflow-hidden bg-white border border-gray-100">
+                    {p.images?.[0] && <Image src={p.images[0]} alt={p.title} fill className="object-contain" sizes="40px" />}
                 </div>
             ),
         },
@@ -203,8 +203,9 @@ export default function AdminProductsPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-                <button onClick={openCreate} className="bg-black text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors">
-                    + Add Product
+                <button onClick={openCreate} className="bg-black text-white px-3 md:px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors">
+                    <span className="hidden md:inline">+ Add Product</span>
+                    <span className="md:hidden text-lg leading-none">+</span>
                 </button>
             </div>
 
@@ -287,8 +288,8 @@ export default function AdminProductsPage() {
                                 {imageFiles.length > 0 && (
                                     <div className="flex gap-3 mt-3 flex-wrap">
                                         {imageFiles.map((f, i) => (
-                                            <div key={i} className="group relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
-                                                <img src={URL.createObjectURL(f)} alt="" className="w-full h-full object-cover" />
+                                            <div key={i} className="group relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0 bg-white">
+                                                <img src={URL.createObjectURL(f)} alt="" className="w-full h-full object-contain" />
                                                 <button
                                                     type="button"
                                                     onClick={() => setImageFiles(prev => prev.filter((_, idx) => idx !== i))}
@@ -310,8 +311,8 @@ export default function AdminProductsPage() {
                                         <p className="text-xs text-gray-500 mb-2">Current images:</p>
                                         <div className="flex gap-3 flex-wrap">
                                             {existingImages.map((url, i) => (
-                                                <div key={i} className="group relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
-                                                    <img src={url} alt="" className="w-full h-full object-cover" />
+                                                <div key={i} className="group relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0 bg-white">
+                                                    <img src={url} alt="" className="w-full h-full object-contain" />
                                                     <button
                                                         type="button"
                                                         onClick={() => setExistingImages(prev => prev.filter((_, idx) => idx !== i))}

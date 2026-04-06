@@ -116,48 +116,43 @@ export default function ChatWidget({ isOpen, onClose }: ChatWidgetProps) {
 
     return (
         <>
-            {/* Chat panel */}
             {isOpen && (
-                <div
-                    className="fixed bottom-6 right-6 z-50 flex flex-col bg-gray-900 rounded-xl shadow-2xl overflow-hidden"
-                    style={{ width: 380, height: 500 }}
-                >
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
-                        <div className="flex items-center gap-2">
-                            <span className="font-semibold text-white text-sm">Chat with Support</span>
-                            {isConnected && (
-                                <span className="w-2 h-2 rounded-full bg-green-400" title="Connected" />
-                            )}
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="text-gray-400 hover:text-white text-lg leading-none"
-                            aria-label="Close chat"
-                        >
-                            ✕
-                        </button>
-                    </div>
-
-                    {/* Body */}
-                    <div className="flex flex-col flex-1 overflow-hidden">
-                        {uploadError && (
-                            <div className="px-4 py-2 bg-red-900 text-red-200 text-xs">
-                                {uploadError}
+                <>
+                    {/* Mobile: full-screen centered overlay */}
+                    <div className="md:hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+                        <div className="w-full max-w-sm h-[60vh] flex flex-col bg-gray-900 rounded-xl shadow-2xl overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-white text-sm">Chat with Support</span>
+                                    {isConnected && <span className="w-2 h-2 rounded-full bg-green-400" title="Connected" />}
+                                </div>
+                                <button onClick={onClose} className="text-gray-400 hover:text-white text-lg leading-none" aria-label="Close chat">✕</button>
                             </div>
-                        )}
-                        <MessageList
-                            messages={messages}
-                            currentUserId={(session.user as { id?: string })?.id ?? ''}
-                        />
+                            <div className="flex flex-col flex-1 overflow-hidden">
+                                {uploadError && <div className="px-4 py-2 bg-red-900 text-red-200 text-xs">{uploadError}</div>}
+                                <MessageList messages={messages} currentUserId={(session.user as { id?: string })?.id ?? ''} />
+                            </div>
+                            <MessageInput onSend={handleSend} disabled={!conversationId} />
+                        </div>
                     </div>
 
-                    {/* Footer */}
-                    <MessageInput
-                        onSend={handleSend}
-                        disabled={!conversationId}
-                    />
-                </div>
+                    {/* Desktop: floating bottom-right widget */}
+                    <div className="hidden md:flex fixed bottom-6 right-6 z-50 flex-col bg-gray-900 rounded-xl shadow-2xl overflow-hidden"
+                        style={{ width: 380, height: 500 }}>
+                        <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-white text-sm">Chat with Support</span>
+                                {isConnected && <span className="w-2 h-2 rounded-full bg-green-400" title="Connected" />}
+                            </div>
+                            <button onClick={onClose} className="text-gray-400 hover:text-white text-lg leading-none" aria-label="Close chat">✕</button>
+                        </div>
+                        <div className="flex flex-col flex-1 overflow-hidden">
+                            {uploadError && <div className="px-4 py-2 bg-red-900 text-red-200 text-xs">{uploadError}</div>}
+                            <MessageList messages={messages} currentUserId={(session.user as { id?: string })?.id ?? ''} />
+                        </div>
+                        <MessageInput onSend={handleSend} disabled={!conversationId} />
+                    </div>
+                </>
             )}
         </>
     );

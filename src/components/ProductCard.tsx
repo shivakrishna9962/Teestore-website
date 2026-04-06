@@ -30,12 +30,12 @@ export default function ProductCard({ product, outOfStock = false }: ProductCard
         <Link href={`/products/${product._id}`} className="group block">
             <div className="relative bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow">
                 {/* Product image */}
-                <div className="relative aspect-square bg-gray-100">
+                <div className="relative aspect-square bg-white">
                     <Image
                         src={imageUrl}
                         alt={product.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-contain group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
 

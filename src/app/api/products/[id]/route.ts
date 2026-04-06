@@ -4,21 +4,13 @@ import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
 import ProductModel from '@/models/Product';
 import InventoryModel from '@/models/Inventory';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { uploadBase64ToCloudinary } from '@/lib/cloudinary';
 
-async function saveBase64Images(base64s: string[], productId: string): Promise<string[]> {
-    const uploadDir = join(process.cwd(), 'public', 'images', 'products');
-    await mkdir(uploadDir, { recursive: true });
+async function saveBase64Images(base64s: string[], _productId: string): Promise<string[]> {
     const urls: string[] = [];
     for (const b64 of base64s) {
-        const matches = b64.match(/^data:image\/(\w+);base64,(.+)$/);
-        if (!matches) continue;
-        const ext = matches[1];
-        const buffer = Buffer.from(matches[2], 'base64');
-        const filename = `product_${productId}_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-        await writeFile(join(uploadDir, filename), buffer);
-        urls.push(`/images/products/${filename}`);
+        const url = await uploadBase64ToCloudinary(b64, 'products');
+        urls.push(url);
     }
     return urls;
 }

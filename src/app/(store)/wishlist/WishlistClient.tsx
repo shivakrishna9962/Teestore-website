@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAppDispatch } from '@/lib/hooks';
@@ -17,6 +17,30 @@ export default function WishlistClient({ initialProducts }: { initialProducts: W
     const dispatch = useAppDispatch();
     const [products, setProducts] = useState<WishlistProduct[]>(initialProducts);
     const [addingToCart, setAddingToCart] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    // Re-fetch on mount to ensure we have the latest data (avoids stale SSR cache)
+    useEffect(() => {
+        setLoading(true);
+        fetch('/api/wishlist')
+            .then((r) => r.json())
+            .then((data) => {
+                const raw: any[] = data.wishlist?.products ?? data.products ?? [];
+                const mapped: WishlistProduct[] = raw
+                    .filter(Boolean)
+                    .map((p: any) => ({
+                        _id: String(p._id ?? p),
+                        title: p.title ?? 'Product',
+                        images: p.images ?? [],
+                        price: p.price ?? 0,
+                        sizes: p.sizes ?? [],
+                        colors: p.colors ?? [],
+                    }));
+                setProducts(mapped);
+            })
+            .catch(() => {/* keep initialProducts on error */ })
+            .finally(() => setLoading(false));
+    }, []);
 
     async function handleRemove(productId: string) {
         setProducts((prev) => prev.filter((p) => p._id !== productId));
@@ -31,6 +55,15 @@ export default function WishlistClient({ initialProducts }: { initialProducts: W
         } finally {
             setAddingToCart(null);
         }
+    }
+
+    if (loading) {
+        return (
+            <div className="max-w-6xl mx-auto px-4 py-10">
+                <h1 className="text-3xl font-bold text-gray-900 mb-8">My Wishlist</h1>
+                <div className="text-center py-20 text-gray-400 text-sm">Loading...</div>
+            </div>
+        );
     }
 
     if (products.length === 0) {
@@ -54,12 +87,12 @@ export default function WishlistClient({ initialProducts }: { initialProducts: W
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map((product) => (
                     <div key={product._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden group hover:shadow-md transition-shadow">
-                        <Link href={`/products/${product._id}`} className="block relative aspect-square bg-gray-100">
+                        <Link href={`/products/${product._id}`} className="block relative aspect-square bg-white">
                             <Image
                                 src={product.images?.[0] ?? '/placeholder.png'}
                                 alt={product.title}
                                 fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="object-contain group-hover:scale-105 transition-transform duration-300"
                                 sizes="(max-width: 768px) 50vw, 25vw"
                             />
                         </Link>

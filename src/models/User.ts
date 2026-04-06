@@ -23,6 +23,11 @@ const UserSchema = new Schema({
   resetTokenExpiry: { type: Date },
   addresses: { type: [AddressSchema], default: [] },
   createdAt: { type: Date, default: Date.now },
+  mobileNumber: { type: String, unique: true, sparse: true },
+  otpHash: { type: String },
+  otpExpiry: { type: Date },
+  otpAttempts: { type: Number, default: 0 },
+  otpLastSentAt: { type: Date },
 });
 
 const UserModel = models.User || model('User', UserSchema);

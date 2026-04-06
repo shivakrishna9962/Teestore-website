@@ -3,8 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
 import ProductModel from '@/models/Product';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
@@ -26,17 +25,12 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
             return NextResponse.json({ error: 'Maximum 6 images per product.' }, { status: 400 });
         }
 
-        const uploadDir = join(process.cwd(), 'public', 'images', 'products');
-        await mkdir(uploadDir, { recursive: true });
-
         const urls: string[] = [];
         for (const file of files) {
             const bytes = await file.arrayBuffer();
             const buffer = Buffer.from(bytes);
-            const ext = file.name.split('.').pop() ?? 'jpg';
-            const filename = `product_${id}_${Date.now()}.${ext}`;
-            await writeFile(join(uploadDir, filename), buffer);
-            urls.push(`/images/products/${filename}`);
+            const url = await uploadToCloudinary(buffer, 'products');
+            urls.push(url);
         }
 
         product.images.push(...urls);
