@@ -46,7 +46,7 @@ export default function CartItem({ item, outOfStock = false }: CartItemProps) {
                         src={item.productImage || '/placeholder.png'}
                         alt={item.productTitle}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                         sizes="80px"
                     />
                 </div>
